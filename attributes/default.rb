@@ -12,7 +12,7 @@ default['rhn']['actions']['enabled'] = []
 
 default['rhn']['org_ca_cert']['action'] = 'install'
 default['rhn']['org_ca_cert']['name'] = 'RHNS-CA-CERT'
-default['rhn']['org_ca_cert']['url'] = "https://#{node['rhn']['hostname']}/pub/#{node['rhn']['org_ca_cert']['name']}"
+default['rhn']['org_ca_cert']['url'] = "https://%{hostname}/pub/%{name}"
 
 default['rhn']['org_gpg_key']['name'] = 'ORG-GPG-KEY'
 default['rhn']['org_gpg_key']['pub'] = nil

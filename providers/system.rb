@@ -47,20 +47,21 @@ def registered?
 end
 
 def register
-  register_args =
-    if new_resource.hostname == 'xmlrpc.rhn.redhat.com'
-      cli_args(
-        'force' => true,
-        'password' => new_resource.password,
-        'profilename' => new_resource.profile_name,
-        'username' => new_resource.username
-      )
-    else
-      cli_args(
-        'activationkey' => new_resource.activation_keys,
-        'force' => true,
-        'profilename' => new_resource.profile_name
-      )
-    end
-  execute_cmd("rhnreg_ks #{register_args}")
+  args = {
+    'force' => true,
+    'profilename' => new_resource.profile_name,
+    'nohardware' => new_resource.no_hardware,
+    'novirtinfo' => new_resource.no_virtinfo,
+    'nopackages' => new_resource.no_packages,
+    'norhnsd' => new_resource.no_rhnsd
+  }
+
+  unless new_resource.hostname == 'xmlrpc.rhn.redhat.com'
+    args.merge!('serverUrl' => "https://#{new_resource.hostname}/XMLRPC")
+  end
+
+  args.merge!('username' => new_resource.username) if new_resource.username
+  args.merge!('password' => new_resource.password) if new_resource.password
+  args.merge!('activationkey' => new_resource.activation_keys) if new_resource.activation_keys
+  execute_cmd("rhnreg_ks #{cli_args(args)}")
 end

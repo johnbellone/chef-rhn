@@ -19,11 +19,17 @@ if node['rhn']['org_ca_cert']['url'].match(/\.rpm$/)
     action node['rhn']['org_ca_cert']['action'].intern
   end
 else
+  # Use string interpolation to avoid having to rewrite if
+  # attributes change for internal satellite servers.
+  url = node['rhn']['org_ca_cert']['url'] % {
+    hostname: node['rhn']['hostname'],
+    name: node['rhn']['org_ca_cert']['name']
+  }
   remote_file "/usr/share/rhn/#{node['rhn']['org_ca_cert']['name']}" do
     owner 'root'
     group 'root'
     mode '0644'
-    source node['rhn']['org_ca_cert']['url']
+    source url
     if node['rhn']['org_ca_cert']['action'] == 'upgrade'
       action :create
     else
